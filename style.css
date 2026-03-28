@@ -1,1 +1,81 @@
+:root {
+  --primary: #2d5a27;
+  --secondary: #4caf50;
+  --bg: #f4f7f6;
+  --text: #333;
+  --error: #e74c3c;
+}
 
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.dashboard-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 550px;
+}
+
+header h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
+.subtitle { margin-top: 0.5rem; color: #666; font-size: 0.9rem; }
+
+.national-stats {
+  background: #e8f5e9;
+  padding: 10px;
+  border-left: 4px solid var(--primary);
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.input-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 5px; }
+select, input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  margin-top: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover { background: var(--secondary); }
+
+.hidden { display: none; }
+.result-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.status { font-size: 1.5rem; font-weight: 800; margin: 10px 0; }
+.on { color: var(--secondary); }
+.off { color: var(--error); }

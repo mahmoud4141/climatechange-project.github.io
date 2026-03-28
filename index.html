@@ -6,9 +6,102 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚰</text></svg>">
     <title>Irrigation System</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+      :root { --green: #2d5a27; --light-green: #e8f5e9; --text: #333; --red: #c0392b; }
+      body { font-family: sans-serif; background: #f0f4f2; display: flex; justify-content: center; padding: 20px; color: var(--text); }
+      .app-box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+      h1 { color: var(--green); text-align: center; margin-bottom: 5px; }
+      .note { text-align: center; font-size: 0.8rem; color: #777; margin-bottom: 20px; }
+      .input-row { margin-bottom: 15px; }
+      label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+      select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+      button { width: 100%; padding: 12px; background: var(--green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+      button:hover { background: #1e3d1a; }
+      #results { margin-top: 20px; background: var(--light-green); padding: 15px; border-radius: 8px; border-left: 5px solid var(--green); display: none; }
+      .status-text { font-size: 1.2rem; font-weight: bold; color: var(--green); margin: 10px 0; }
+      .status-off { color: var(--red); }
+    </style>
   </head>
   <body>
-    <script src="index.js"></script>
+    <div class="app-box">
+      <h1>Climate Change and Sustainability Project</h1>
+      <h1>Simple Irrigation System</h1>
+      
+
+      <div class="input-row">
+        <label>Crop</label>
+        <select id="crop">
+          <option value="1.3">Rice </option>
+          <option value="1.1">Corn</option>
+          <option value="0.9">Wheat</option>
+          <option value="0.7">Potato</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>Soil Type</label>
+        <select id="soil">
+          <option value="1.5">Sandy soil</option>
+          <option value="1.0">Loamy soil</option>
+          <option value="0.7">Clay soil</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>Air Temperature (°C)</label>
+        <input type="number" id="temp" value="30">
+      </div>
+
+      <div class="input-row">
+        <label>How wet is the soil? (%)</label>
+        <input type="number" id="moisture" value="25">
+      </div>
+
+      <button onclick="checkField()">Check my Field</button>
+
+      <div id="results">
+        <strong>Field Status:</strong>
+        <div id="pumpState" class="status-text">...</div>
+        <p>Water to add: <span id="waterVol">0</span> Liters per Acre</p>
+      </div>
+    </div>
+
+    <script>
+      // Experience Database (Training Data)
+      const pastData = [
+          {m: 10, t: 40, label: "ON"},  {m: 20, t: 35, label: "ON"},
+          {m: 50, t: 20, label: "OFF"}, {m: 60, t: 15, label: "OFF"},
+          {m: 30, t: 30, label: "ON"},  {m: 45, t: 25, label: "OFF"}
+      ];
+
+      function checkField() {
+          const m = parseFloat(document.getElementById('moisture').value);
+          const t = parseFloat(document.getElementById('temp').value);
+          const cropFactor = parseFloat(document.getElementById('crop').value);
+          const soilFactor = parseFloat(document.getElementById('soil').value);
+
+          // Find the closest past experience (KNN magic)
+          let closest = pastData.map(p => {
+              let dist = Math.sqrt(Math.pow(m - p.m, 2) + Math.pow(t - p.t, 2));
+              return { label: p.label, dist: dist };
+          }).sort((a, b) => a.dist - b.dist)[0];
+
+          // Show Results
+          const resBox = document.getElementById('results');
+          const pumpText = document.getElementById('pumpState');
+          const waterVal = document.getElementById('waterVol');
+
+          resBox.style.display = "block";
+          pumpText.innerText = closest.label === "ON" ? "PUMP ON: FIELD IS DRY" : "PUMP OFF: SOIL IS GOOD";
+          
+          if(closest.label === "ON") {
+              pumpText.classList.remove('status-off');
+              waterVal.innerText = Math.round(4000 * cropFactor * soilFactor);
+          } else {
+              pumpText.classList.add('status-off');
+              waterVal.innerText = "0";
+          }
+      }
+    </script>
   </body>
 </html>

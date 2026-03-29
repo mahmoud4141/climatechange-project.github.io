@@ -13,12 +13,11 @@ h1 { color: var(--green); text-align: center; margin-bottom: 5px; font-size: 1.6
 .input-row { margin-bottom: 15px; }
 label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
 select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-button { width: 100%; padding: 12px; background: var(--green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
+button { width: 100%; padding: 12px; background: var(--green); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
 button:hover { background: #1e3d1a; }
 #results { margin-top: 20px; background: var(--light-green); padding: 15px; border-radius: 8px; border-left: 5px solid var(--green); display: none; }
 .status-text { font-size: 1.2rem; font-weight: bold; color: var(--green); margin: 10px 0; }
 .status-off { color: var(--red); }
-
 .student-info { 
     text-align: center; 
     margin-top: 25px; 
@@ -31,11 +30,10 @@ button:hover { background: #1e3d1a; }
 </style>
 </head>
 <body>
-
 <div class="app-box">
   <h1>Climate Change & Sustainability</h1>
   <h2 style="text-align:center; font-size:1.1rem; color:#666; margin-top:0;">Simple Irrigation System</h2>
-
+  
   <div class="input-row">
     <label>Crop</label>
     <select id="crop">
@@ -45,7 +43,7 @@ button:hover { background: #1e3d1a; }
       <option value="0.7">Potato</option>
     </select>
   </div>
-
+  
   <div class="input-row">
     <label>Soil Type</label>
     <select id="soil">
@@ -54,25 +52,30 @@ button:hover { background: #1e3d1a; }
       <option value="0.7">Clay soil</option>
     </select>
   </div>
-
+  
   <div class="input-row">
     <label>Air Temperature (-10 to 60°C)</label>
     <input type="number" id="temp" value="30" min="-10" max="60">
   </div>
-
+  
   <div class="input-row">
     <label>Soil Moisture (0 to 100%)</label>
     <input type="number" id="moisture" value="25" min="0" max="100">
   </div>
 
-  <button id="check-btn">Check my Field</button>
+  <div class="input-row">
+    <label>Land Size (in Acres)</label>
+    <input type="number" id="landSize" value="1" min="0.25" step="0.25">
+  </div>
 
+  <button id="check-btn">Check my Field</button>
+  
   <div id="results">
     <strong>Field Status:</strong>
     <div id="pumpState" class="status-text">...</div>
-    <p>Water to add: <span id="waterVol">0</span> Liters per Acre</p>
+    <p>Total water to add: <span id="waterVol">0</span> Liters</p>
   </div>
-
+  
   <div class="student-info">
     <p>Made by: <b>Mahmoud Wageh</b> | 
        <a href="https://github.com/mahmoud4141/climatechange-project.github.io" target="_blank">Project Files Link</a>
@@ -92,10 +95,13 @@ button:hover { background: #1e3d1a; }
       let t = parseFloat(document.getElementById('temp').value);
       const cropFactor = parseFloat(document.getElementById('crop').value);
       const soilFactor = parseFloat(document.getElementById('soil').value);
+      
+      // NEW: Get the land size
+      const landSize = parseFloat(document.getElementById('landSize').value);
 
-      // Validation limit check
-      if (m < 0 || m > 100 || t < -10 || t > 60) {
-          alert("Error: Please enter a valid moisture (0-100) and temperature (-10 to 60).");
+      // UPDATED: Validation limit check now includes landSize
+      if (m < 0 || m > 100 || t < -10 || t > 60 || landSize <= 0) {
+          alert("Error: Please enter valid inputs for moisture (0-100), temperature (-10 to 60), and land size (>0).");
           return;
       }
 
@@ -107,14 +113,17 @@ button:hover { background: #1e3d1a; }
       const resultsDiv = document.getElementById('results');
       const pumpSpan = document.getElementById('pumpState');
       const waterSpan = document.getElementById('waterVol');
-
+      
       resultsDiv.style.display = "block";
+      
       if(nearest.label === "ON") {
-          pumpSpan.innerText = "Pump is on: field is dry";
+          pumpSpan.innerText = "Pump is ON: Field is dry";
           pumpSpan.classList.remove('status-off');
-          waterSpan.innerText = Math.round(4000 * cropFactor * soilFactor);
+          
+          // UPDATED: Multiply the base formula by the land size and add commas to the number
+          waterSpan.innerText = Math.round(4000 * cropFactor * soilFactor * landSize).toLocaleString();
       } else {
-          pumpSpan.innerText = "pump is off: soil is good";
+          pumpSpan.innerText = "Pump is OFF: Soil moisture is good";
           pumpSpan.classList.add('status-off');
           waterSpan.innerText = "0";
       }
@@ -122,6 +131,5 @@ button:hover { background: #1e3d1a; }
 
   document.getElementById('check-btn').addEventListener('click', checkField);
 </script>
-
 </body>
 </html>
